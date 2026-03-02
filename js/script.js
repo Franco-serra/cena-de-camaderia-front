@@ -22,26 +22,30 @@ document.addEventListener("DOMContentLoaded", function () {
             ? parseInt(document.getElementById("guestNumber").value) || 0
             : 0;
 
+        mensaje.style.color = "blue";
+        mensaje.textContent = "Enviando confirmación...";
+
+        const controller = new AbortController();
+
+        const timeout = setTimeout(() => controller.abort(), 30000);
+
         try {
-            const controller = new AbortController();
 
-const timeout = setTimeout(() => controller.abort(), 30000);
+            const response = await fetch(`${API_URL}/api/confirmaciones`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nombre,
+                    apellido,
+                    llevaAcompanantes: bringsGuest,
+                    cantidadAcompanantes: guestNumber
+                }),
+                signal: controller.signal
+            });
 
-const response = await fetch(`${API_URL}/api/confirmaciones`, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        nombre,
-        apellido,
-        llevaAcompanantes: bringsGuest,
-        cantidadAcompanantes: guestNumber
-    }),
-    signal: controller.signal
-});
-
-clearTimeout(timeout);
+            clearTimeout(timeout);
 
             const data = await response.json();
 
@@ -58,7 +62,7 @@ clearTimeout(timeout);
 
         } catch (error) {
             mensaje.style.color = "red";
-            mensaje.textContent = "Error de conexión con el servidor";
+            mensaje.textContent = "El servidor está despertando, intentá nuevamente.";
         }
     });
 
