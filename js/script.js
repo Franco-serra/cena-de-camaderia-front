@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+    const API_URL = "https://cena-de-camaderia.onrender.com";
     const form = document.getElementById("rsvpForm");
     const mensaje = document.getElementById("mensaje");
     const checkbox = document.getElementById("bringGuest");
@@ -22,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
             : 0;
 
         try {
-            const response = await fetch("https://cena-de-camaderia.onrender.com", {
+            const response = await fetch(`${API_URL}/api/confirmaciones`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
