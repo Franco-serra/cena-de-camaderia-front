@@ -23,18 +23,25 @@ document.addEventListener("DOMContentLoaded", function () {
             : 0;
 
         try {
-            const response = await fetch(`${API_URL}/api/confirmaciones`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    nombre,
-                    apellido,
-                    llevaAcompanantes: bringsGuest,
-                    cantidadAcompanantes: guestNumber
-                })
-            });
+            const controller = new AbortController();
+
+const timeout = setTimeout(() => controller.abort(), 30000);
+
+const response = await fetch(`${API_URL}/api/confirmaciones`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        nombre,
+        apellido,
+        llevaAcompanantes: bringsGuest,
+        cantidadAcompanantes: guestNumber
+    }),
+    signal: controller.signal
+});
+
+clearTimeout(timeout);
 
             const data = await response.json();
 
