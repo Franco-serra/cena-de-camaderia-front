@@ -32,18 +32,17 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
 
             const response = await fetch(`${API_URL}/api/confirmaciones`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    nombre,
-                    apellido,
-                    llevaAcompanantes: bringsGuest,
-                    cantidadAcompanantes: guestNumber
-                }),
-                signal: controller.signal
-            });
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        nombre,
+        apellido,
+        llevaAcompanantes: bringsGuest,
+        cantidadAcompanantes: guestNumber
+    })
+});
 
             clearTimeout(timeout);
 
