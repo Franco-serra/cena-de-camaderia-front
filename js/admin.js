@@ -3,6 +3,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const token = localStorage.getItem("token");
     const API_URL = "https://cena-de-camaderia.onrender.com";
 
+    const modal = document.getElementById("modalConfirm");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
+    let idAEliminar = null;
+    
     if (!token) {
         window.location.href = "login.html";
         return;
@@ -29,7 +35,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function cargarDashboard() {
-
         const res = await fetchAuth("/api/confirmaciones");
         const data = await res.json();
 
@@ -57,24 +62,50 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <td>${c.llevaAcompanantes ? "Sí" : "No"}</td>
                 <td>${c.cantidadAcompanantes}</td>
                 <td>
-                    <button onclick="eliminarConfirmacion('${c._id}')">❌</button>
+                    <button class="btn-eliminar" data-id="${c._id}">❌</button>
                 </td>
             </tr>
         `).join("");
+
+        activarBotonesEliminar(); 
     }
 
-    window.eliminarConfirmacion = async function(id) {
+    
+    function activarBotonesEliminar(){
+        document.querySelectorAll(".btn-eliminar").forEach(btn => {
+            btn.addEventListener("click", () => {
+                idAEliminar = btn.dataset.id;
+                modal.classList.add("active");
+            });
+        });
+    }
+
+    
+    cancelBtn.addEventListener("click", () => {
+        modal.classList.remove("active");
+        idAEliminar = null;
+    });
+
+    
+    confirmBtn.addEventListener("click", async () => {
+        if(idAEliminar){
+            await eliminarConfirmacion(idAEliminar);
+        }
+        modal.classList.remove("active");
+    });
+
+    
+    async function eliminarConfirmacion(id) {
         await fetchAuth(`/api/confirmaciones/${id}`, {
             method: "DELETE"
         });
 
         cargarDashboard();
-    };
+    }
 
     const searchInput = document.getElementById("searchInput");
 
     searchInput.addEventListener("input", async () => {
-
         const apellido = searchInput.value;
 
         const res = await fetchAuth(`/api/confirmaciones?apellido=${apellido}`);
